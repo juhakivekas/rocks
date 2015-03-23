@@ -1,0 +1,66 @@
+Gamepad
+-------
+
+The gamepad object has the responsiobility of starting, running and terminating the listener thread for the input device. The gamepad will also broadcast the current controller status through public variables that can bea read without mutex problems.
+
+Constructing the object will open the device and start a new thread that reads the pad.
+Destructing will kill hte thread, close the device and free any used memory.
+
+Rumblepad protocol
+------------------
+
+The protocol of the Logitech rumblepad has been reverse-engineered from the raw /dev/input/js0 data by systematic trial and error examination. As far as testing goes thsi model has been accurate to every aspect.
+
+Each packet consists of eight bytes that are read as one block. The first four bytes are a 'timestamp', followed by two bytes of 'value' data, one byte of 'type' data, and lastly one byte that defies the 'channel' of the data.
+
+Raw input:
+
+	fc f0 5f 1a d5 0f 02 01
+
+the 32-bit timestamp and 16-bit value parts are LSB so the bytes have to be reordered to construct the right values
+
+	time:	1a5ff0fc
+	value:	0fd5
+	type:	02
+	channel:01
+
+The format of the time has not been examined, but it is in the order of milliseconds. The types of messages are 0x01 and 0x02 corresponding to digital and analog inputs respectively.
+
+	type:
+	0x01	digital (button)
+	0x02	analog (joystick and directional pad)
+	0x81	initialize digital channel (only sent once when device is opened)
+	0x82	initialize analog channel
+
+The channels and values are different in analog and digital mode and do overlap, so the type must be taken into account while reading this data.
+
+	channel when type is 'digital':
+	0x00	button "1"
+	0x01	button "2"
+	.
+	.
+	.
+	0x09	button"9"
+
+	value when type is 'digital':
+	0x00	button release
+	0x01	button press
+
+
+	channel if type is analog:
+	0x00	left joystick x	
+	0x01	left joystick y
+	0x02	right joystick x	
+	0x03	right joystick y
+	0x04	directional pad x	
+	0x05	directional pad y
+
+	when the type is analog the value data is a 16-bit signed integer in LSB first.
+
+This gives our example data a interpretation like this:
+
+	time:	 ?
+	value:	 4053
+	type:	 analog axis data
+	channel: left joystick x
+

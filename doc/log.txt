@@ -1,0 +1,13 @@
+Layers of abstraction
+---------------------
+
+I'm really more of a nerd than an artist so i'm going to do things in a very complex way. The effects of this project could probably be done with open frameworks, Processing or some other media art platform in a much easier way, but i've decided to go with the hardcore solution, C++.
+
+This is a project that has a user interface, is graphical, requires a nontrivial architecture, is theraded and will include bit twiddling to read the controller. In general i feel this will showcdase my abilities and interests as a software develper and creative mind. Hopefully i'll end up with something that looks and sounds nice.
+
+AAVE
+----
+
+Turns out this is to become my AAVE project. I'll probably perform with the instrument/architecture also on other gigs, so this is really my first whole musical piece. I'm quite pumped and i've got a lot of inspiration and pressure to finish it in two weeks. I'll be doing the connecting (classes, audio, buffers, controls, etc.) this week and concentrate on the creative content next week.
+
+I never thought of myself as a musician but this will actually mark my start as a audio performer. I really look forward to whatever this takes me to.

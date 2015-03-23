@@ -1,0 +1,9 @@
+I dislike the name "Object" but since i'm using C++ i won't be able to refrain from using it.
+
+The project can be roughly divided to three sections: Input, Audio, and Video. These sections are implemented using a GmaePad, the Framebuffer and JACK audio respectively.
+
+Gamepad
+-------
+
+The program input will come from a separate thread that reads the gamepad and constantly updates the controller state and stores it into a public read-only variable.
+read()
