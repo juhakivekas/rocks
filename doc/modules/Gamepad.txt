@@ -1,10 +1,11 @@
 Gamepad
 -------
 
-The gamepad object has the responsiobility of starting, running and terminating the listener thread for the input device. The gamepad will also broadcast the current controller status through public variables that can bea read without mutex problems.
+The gamepad object has the responsiobility of starting, running and terminating the listener thread for the input device. The gamepad will also broadcast the current controller status through public variables that can be read by other threads (without mutex problems).
 
 Constructing the object will open the device and start a new thread that reads the pad.
 Destructing will kill hte thread, close the device and free any used memory.
+While the object is in scope the status variables will contain the most recent recieved values.
 
 Rumblepad protocol
 ------------------
