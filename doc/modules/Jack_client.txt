@@ -1,0 +1,9 @@
+Jack client
+-----------
+
+The Jack_client object is responsible for the client-server communications with the jackd process.
+
+Construction starts a new client.
+Adding beats does exactly that, adds beat channels to the client, these have to be connected with jack_ctl or QjackCtl.
+Activate starts the playback of the defined channels.
+Destruction closes the client.

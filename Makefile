@@ -2,7 +2,9 @@
 #CFLAGS=-g -Wall
 
 CPPC=g++
-CPPFLAGS=-g -Wall -std=c++11 -lpthread
+JACKFLAGS= -lpthread -ljack -ldl -lrt -lm
+ALSAFLAGS= -lpthread -lasound -ldl -lm
+CPPFLAGS=-g -Wall -std=c++11 -lpthread $(JACKFLAGS)
 
 
 all: compile test
@@ -11,7 +13,13 @@ test:\
 	Gamepad_test.out
 	./Gamepad_test.out
 
-compile: objects rubble.out
+compile: objects rubble.out beat.out
+
+beat.out:\
+	bin/Jack_beater.o\
+	bin/Bytebeat.o\
+	bin/beat.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
 
 rubble.out:\
 	bin/Gamepad.o\

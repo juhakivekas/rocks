@@ -42,6 +42,8 @@ The channels and values are different in analog and digital mode and do overlap,
 	.
 	.
 	0x09	button"9"
+	0x0a	left joystick press
+	0x0b	right joystick press
 
 	value when type is 'digital':
 	0x00	button release
@@ -62,6 +64,6 @@ This gives our example data a interpretation like this:
 
 	time:	 ?
 	value:	 4053
-	type:	 analog axis data
+	type:	 analog data
 	channel: left joystick x
 

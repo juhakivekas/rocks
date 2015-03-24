@@ -1,0 +1,4 @@
+Bytebeat
+--------
+
+The bytebeat object is a way to store and pass bytebeats to the Jack_client object. The Bytebeats consist of a JACK port identifier, a name, and the beat-defining function. The bytebeat objects are used in order to be able too have several channels of playback. The bytebeats are really nothing more than a struct wrapped into a class.
