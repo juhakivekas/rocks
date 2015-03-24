@@ -52,9 +52,12 @@ int Gamepad::format(){
 	time =  raw[0] + (raw[1]<<8) + (raw[2]<<16) + (raw[3]<<24);
 
 	value = raw[4] + (raw[5]<<8);
+	//flip a bit to make the value unsigned
+	value ^= (1<<15);
+
 	//fix signedness
 	//XXX is this necessary if we used 16 but integers?
-	if(value > (1<<15)) value = value-(1<<16);
+	//if(value > (1<<15)) value = value-(1<<16);
 	
 	type = raw[6];
 	channel = raw[7];
