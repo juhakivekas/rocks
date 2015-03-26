@@ -32,7 +32,7 @@ Jack_beater::Jack_beater(const char *client_name){
 	jack_status_t status;
 	client = jack_client_open(client_name, JackNoStartServer, &status);
 	if (client == NULL) {
-		fprintf (stderr, "JACK server not running?\n");
+		fprintf(stderr, "JACK server not running?\n");
 		exit(1);
 	}
 	jack_set_process_callback(client, process, (void*) this);
@@ -42,7 +42,7 @@ int Jack_beater::activate(){
 	int status;
 	status = jack_activate(client);
 	if (status) {
-		fprintf (stderr, "Error while activating JACK client, status:%d.\n", status);
+		fprintf(stderr, "Error while activating JACK client, status:%d.\n", status);
 		return 1;
 	}
 	return 0;

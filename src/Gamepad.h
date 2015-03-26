@@ -29,9 +29,6 @@
 
 class Gamepad{
 public:
-	//RAW DATA
-	uint8_t raw[RAW_LENGTH];	//raw USB-HID data
-
 	//FORMATTED DATA
 	//timestamp
 	uint32_t time;
@@ -41,11 +38,19 @@ public:
 	uint32_t digital;
 
 	//analog channels ordered according to the axis enumerator
+	//range is from 0 to (1<<16), the zero state is (2<<15).
 	int32_t analog[6];
 
 	//construct and destruct
 	Gamepad(const char* device);
 	~Gamepad();
+
+//-----------------------------------------------------------------------------
+	//XXX everything from here on should be private
+	//XXX but it has to be available for pthread to work
+	//RAW DATA
+	uint8_t raw[RAW_LENGTH];	//raw USB-HID data
+
 
 	//getter for nice looking button reads
 	int button(int i){

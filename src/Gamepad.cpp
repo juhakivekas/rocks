@@ -37,28 +37,27 @@ int Gamepad::read_raw(){
 	int status = read(fd, (void*)raw, RAW_LENGTH);
 	if(status < 0){
 		perror("Error reading Gamepad device: ");
-		return 1;
+		exit(1);
+		//return 1;
 	}
 	//debug output
 	//printf("Time: %02x%02x%02x%02x\n", raw[0], raw[1], raw[2], raw[3]);
-	//printf("Data: %02x%02x%02x%02x\n\n", raw[4], raw[5], raw[6], raw[7]);
+	//printf("Data: %02x%02x%02x%02x\n", raw[4], raw[5], raw[6], raw[7]);
 	
 	return 0;
 }
 
 int Gamepad::format(){
-	int value, channel, type;
+	int analog_value, digital_value, channel, type;
 	//PART 1: put things in neat boxes
 	time =  raw[0] + (raw[1]<<8) + (raw[2]<<16) + (raw[3]<<24);
 
-	value = raw[4] + (raw[5]<<8);
+	analog_value = raw[4] + (raw[5]<<8);
 	//flip a bit to make the value unsigned
-	value ^= (1<<15);
-
-	//fix signedness
-	//XXX is this necessary if we used 16 but integers?
-	//if(value > (1<<15)) value = value-(1<<16);
+	analog_value ^= (1<<15);
 	
+	digital_value = raw[4];
+
 	type = raw[6];
 	channel = raw[7];
 
@@ -67,13 +66,13 @@ int Gamepad::format(){
 		//make the channel correspond the labeled number of buttons
 		channel += 1;
 		//edit the bitmask of buttons
-		if(value == 1){
+		if(digital_value == 1){
 			digital |=  (1<<channel);
 		}else{
 			digital &= ~(1<<channel);
 		}
 	}else if(type == ANALOG || type == ANALOG_INIT){
-		analog[channel] = value;
+		analog[channel] = analog_value;
 	}else{
 		fprintf(stderr, "Error in Gamepad data formatting\n");
 		fprintf(stderr, "type:%d\n", type);
@@ -91,6 +90,7 @@ void* listen(void* arg){
 		g->format();
 		//place format prints here if you want to check something
 		//printf("%10d %5d %5d\n", g->time, g->analog[LX], g->analog[LY]);	
+		//printf("%04x\n", g->digital);	
 	}
 	return NULL;
 }
