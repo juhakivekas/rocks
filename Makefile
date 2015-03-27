@@ -4,11 +4,13 @@
 CPPC=g++
 JACKFLAGS= -lpthread -ljack -ldl -lrt -lm
 ALSAFLAGS= -lpthread -lasound -ldl -lm
-CPPFLAGS=-g -Wall -std=c++11 -lpthread $(JACKFLAGS)
+X11FLAGS= -lX11
+CPPFLAGS=-g -Wall -std=c++11 -lpthread #$(JACKFLAGS)
 
 
 all: compile test
 compile: objects rubble.out beat.out whiskey.out mineral.out
+#slide.out
 
 test:\
 	Gamepad_test.out
@@ -17,16 +19,23 @@ test:\
 
 #--------EXECUTABLES--------
 
+#X11 graphics demo
+slide.out:\
+	bin/simple_drawing.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(X11FLAGS)
+#	bin/X11_display.o
+	 
+
 #Gamepad controlled Framebuffer graphics
 mineral.out:\
 	bin/Framebuffer.o\
 	bin/Gamepad.o\
 	bin/mineral.o
-	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
+	$(CPPC) -o $@ $^ $(CPPFLAGS)
 
 #Gamepad controlled JACK bytebeats
 whiskey.out:\
-	bin/Jack_beater.o\
+	bin/Beater.o\
 	bin/Bytebeat.o\
 	bin/Gamepad.o\
 	bin/whiskey.o
@@ -34,7 +43,7 @@ whiskey.out:\
 
 #JACK bytebeats
 beat.out:\
-	bin/Jack_beater.o\
+	bin/Beater.o\
 	bin/Bytebeat.o\
 	bin/beat.o
 	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
@@ -57,7 +66,7 @@ Gamepad_test.out:\
 
 objects:\
 	bin/Gamepad.o\
-	bin/Jack_beater.o\
+	bin/Beater.o\
 	bin/Bytebeat.o
 
 bin/%.o: src/%.cpp
@@ -68,4 +77,4 @@ bin/%_test.o: test/%_test.cpp
 
 #--------CLEANUP--------
 clean:
-	rm -rf bin/*
+	rm -rf bin/* *.out

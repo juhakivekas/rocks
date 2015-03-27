@@ -15,16 +15,17 @@
 
 typedef jack_default_audio_sample_t sample_t;
 
-class Jack_beater{
+class Beater{
 public:
 	jack_client_t *client;
+
 	int numbeats;
-	Bytebeat *beats[8];
+	Bytebeat *beat[8];
 	
-	Jack_beater(const char* name);
-	~Jack_beater();
+	Beater(const char* name);
+	~Beater();
 	int activate();
-	void add_beat(Bytebeat* beat);
+	void add_beat(bytebeat_func func, const char* name);
 };
 
 #endif/*jack_beater_h*/

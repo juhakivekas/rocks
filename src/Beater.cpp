@@ -2,7 +2,7 @@
 This is a realtime bytebeat JACK client object!
 */
 
-#include "Jack_beater.h"
+#include "Beater.h"
 
 float uint8_to_float(int value){
 	value &= 0xff;
@@ -11,15 +11,15 @@ float uint8_to_float(int value){
 }
 
 int process(jack_nframes_t nframes, void *arg){
-	Jack_beater *ctx = (Jack_beater*) arg;
+	Beater *ctx = (Beater*) arg;
 	static int t_glob = 0;
 	int i, j, t;
 	sample_t *buffer;
 	for(j=0; j<ctx->numbeats; j++){
-		buffer = (sample_t*) jack_port_get_buffer (ctx->beats[j]->port, nframes);
+		buffer = (sample_t*) jack_port_get_buffer (ctx->beat[j]->port, nframes);
 		t = t_glob;
 		for(i=0; i<(int) nframes; i++){
-			buffer[i] = uint8_to_float(ctx->beats[j]->beat(t));
+			buffer[i] = uint8_to_float(ctx->beat[j]->func(t));
 			t++;
 		}
 	}
@@ -27,7 +27,7 @@ int process(jack_nframes_t nframes, void *arg){
 	return 0;
 }
 
-Jack_beater::Jack_beater(const char *client_name){
+Beater::Beater(const char *client_name){
 	numbeats = 0;
 	jack_status_t status;
 	client = jack_client_open(client_name, JackNoStartServer, &status);
@@ -38,7 +38,7 @@ Jack_beater::Jack_beater(const char *client_name){
 	jack_set_process_callback(client, process, (void*) this);
 }
 
-int Jack_beater::activate(){
+int Beater::activate(){
 	int status;
 	status = jack_activate(client);
 	if (status) {
@@ -48,7 +48,7 @@ int Jack_beater::activate(){
 	return 0;
 }
 
-Jack_beater::~Jack_beater(){
+Beater::~Beater(){
 	int status;
 	status = jack_client_close(client);
 	if(status){
@@ -56,8 +56,9 @@ Jack_beater::~Jack_beater(){
 	}
 }
 
-void Jack_beater::add_beat(Bytebeat *beat){
-	beat->port = jack_port_register(client, beat->name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-	beats[numbeats] = beat;
-	numbeats++;	
+void Beater::add_beat(bytebeat_func func, const char* name){
+	Bytebeat *b = new Bytebeat(func, name);
+	b->port = jack_port_register(client, b->name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	beat[numbeats] = b;
+	numbeats++;
 }

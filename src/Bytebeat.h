@@ -14,9 +14,9 @@ class Bytebeat{
 public:
 	jack_port_t* port;		//JACK output port
 	char name[64];			//the name that shows up on the JACK port
-	bytebeat_func beat;		//bytebeat function pointer, t is time, m is MIDI
+	bytebeat_func func;		//bytebeat function pointer, t is time, m is MIDI
 
-	Bytebeat(const char* name, bytebeat_func beat);
+	Bytebeat(bytebeat_func beat, const char* name_in);
 	~Bytebeat();
 };
 

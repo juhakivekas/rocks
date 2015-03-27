@@ -1,5 +1,5 @@
 #include "Bytebeat.h"
-#include "Jack_beater.h"
+#include "Beater.h"
 
 char beat_0(int t){
 //	return (
@@ -11,9 +11,8 @@ char beat_0(int t){
 }
 
 int main(){
-	Jack_beater JACK = Jack_beater("beater");
-	Bytebeat b = Bytebeat("one", beat_0);
-	JACK.add_beat(&b);
+	Beater JACK = Beater("Beater");
+	JACK.add_beat(beat_0, "0");
 	JACK.activate();
 	sleep(60);
 }
