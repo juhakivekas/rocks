@@ -8,7 +8,9 @@
 #include <jack/jack.h>
 #include <jack/transport.h>
 
-typedef char (*bytebeat_func)(int t);
+#include "Context.h"
+
+typedef char (*bytebeat_func)(int t, char_data *d);
 
 class Bytebeat{
 public:

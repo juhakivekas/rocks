@@ -1,5 +1,5 @@
-#ifndef jack_beater_h
-#define jack_beater_h
+#ifndef beater_h
+#define beater_h
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,20 +12,24 @@
 #include <jack/transport.h>
 
 #include "Bytebeat.h"
+#include "Context.h"
 
 typedef jack_default_audio_sample_t sample_t;
 
 class Beater{
 public:
+	
 	jack_client_t *client;
+
+	Context *context;
 
 	int numbeats;
 	Bytebeat *beat[8];
 	
-	Beater(const char* name);
+	Beater(Context* ctx, const char* name);
 	~Beater();
 	int activate();
 	void add_beat(bytebeat_func func, const char* name);
 };
 
-#endif/*jack_beater_h*/
+#endif/*beater_h*/

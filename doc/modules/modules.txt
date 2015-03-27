@@ -1,7 +1,8 @@
 The project can be roughly divided to three sections: Input, Audio, and Video. These sections are implemented using a GmaePad, the Framebuffer and JACK audio respectively.
 
-Gamepad
--------
 
-The program input will come from a separate thread that reads the gamepad and constantly updates the controller state and stores it into a public read-only variable.
-read()
+If we followed the single responsibility principle we could sum up the responsibility of each object in one sentence. Let's do just that.
+Gamepad:	Make the raw gamepad input data available in a nice formatted way.
+Context:	Collect all input data (Gamepad, MIDI, time, etc.) into a single container.
+Bytebeat:	Define the function for a bytebeat channel of the Beater.
+Beater:		To synthesize the bytebeat channels from the Context data when JACK asks it to.

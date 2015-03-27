@@ -1,5 +1,9 @@
 #include "Gamepad.h"
 
+Gamepad::Gamepad(){
+	listening = false;	
+}
+
 Gamepad::Gamepad(const char* device){
 	//null everything
 	digital = 0;
@@ -22,13 +26,18 @@ Gamepad::Gamepad(const char* device){
 		close(fd);
 		exit(1);
 	}
+	listening = true;
+	fprintf(stderr, "Opened Gamepad device and started listener thread.\n");
 }
 
 Gamepad::~Gamepad(){
-	//kill listener thread
-	pthread_cancel(listener);
-	//close device filedescriptor
-	close(fd);	
+	if(listening){
+		//kill listener thread
+		pthread_cancel(listener);
+		//close device filedescriptor
+		close(fd);
+		fprintf(stderr, "Closed Gamepad device and killed listener thread.\n");
+	}
 }
 
 int Gamepad::read_raw(){
@@ -90,7 +99,7 @@ void* listen(void* arg){
 		g->format();
 		//place format prints here if you want to check something
 		//printf("%10d %5d %5d\n", g->time, g->analog[LX], g->analog[LY]);	
-		//printf("%04x\n", g->digital);	
+		//printf("gamepad.lx:  %02x\n", g->analog[LX]);	
 	}
 	return NULL;
 }

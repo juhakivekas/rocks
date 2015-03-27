@@ -1,7 +1,7 @@
-#include "Bytebeat.h"
+#include "Context.h"
 #include "Beater.h"
 
-char beat_0(int t){
+char beat_0(int t, char_data* d){
 //	return (
 //		t>>((m[1]>>4)+(3&t>>7))	
 //	);
@@ -11,7 +11,9 @@ char beat_0(int t){
 }
 
 int main(){
-	Beater JACK = Beater("Beater");
+	Gamepad gamepad = Gamepad("/dev/input/js0");
+	Context context = Context(&gamepad);
+	Beater JACK = Beater(&context, "beater");
 	JACK.add_beat(beat_0, "0");
 	JACK.activate();
 	sleep(60);

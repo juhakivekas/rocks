@@ -8,14 +8,12 @@ int main(){
 	Framebuffer f = Framebuffer(framebuffer_path);
 	Gamepad g = Gamepad(gamepad_path);
 	int color;
-	float x,y,xx,yy;
+	float x,y;
 	x = ((float) g.analog[RX] / (float)(1<<16))*f.vinfo.xres;
 	y = ((float) g.analog[RY] / (float)(1<<16))*f.vinfo.yres;
 	int i=0;
 	f.clear();
 	while(i<1000){
-		xx=x;
-		yy=y;
 		x = ((float) g.analog[RX] / (float)(1<<16))*f.vinfo.xres;
 		y = ((float) g.analog[RY] / (float)(1<<16))*f.vinfo.yres;
 		//x = g.analog[RX]>>7;

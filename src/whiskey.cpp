@@ -1,17 +1,19 @@
 #include "Beater.h"
-#include "Bytebeat.h"
-#include "Gamepad.h"
+#include "Context.h"
 
-const char* device = "/dev/input/js0";
-Gamepad g = Gamepad(device);
+//scale to [0,7]
+#define rx (d->rx>>5)
 
-char beat_0(int t){
-	return t>>(t>>((g.analog[RX]>>13))&4);//(g.analog[RX]>>14);
+char beat_0(int t, char_data *d){
+	//return t>>(t>>(rx+5)&7);
+	return t>>2;
 }
 
 int main(){
-	Beater JACK = Beater("beater");
-	JACK.add_beat(beat_0, "1");
+	Gamepad gamepad = Gamepad("/dev/input/js0");
+	Context context = Context(&gamepad);
+	Beater JACK = Beater(&context, "beater");
+	JACK.add_beat(beat_0, "0");
 	JACK.activate();
 	sleep(20);
 }

@@ -11,3 +11,16 @@ AAVE
 Turns out this is to become my AAVE project. I'll probably perform with the instrument/architecture also on other gigs, so this is really my first whole musical piece. I'm quite pumped and i've got a lot of inspiration and pressure to finish it in two weeks. I'll be doing the connecting (classes, audio, buffers, controls, etc.) this week and concentrate on the creative content next week.
 
 I never thought of myself as a musician but this will actually mark my start as a audio performer. I really look forward to whatever this takes me to.
+
+Architecture
+------------
+
+Since this is going to be software that is interactive and used by a generic user in a live environment it has to run without crashes. A mashup piece of software is likely to break when you wiggle the controls enough. This has had the effect that i'm trying to insulate the different parts into their own objects in a way that i'll be less likely to make sources of bugs.
+The software is also meant for creative coding techniques which means that the software has certain parts that are going to be modified frequently and without breaking other code it interacts with. This is yet another reason for having a proper architecture and object design.
+It's a shame i didn't manage to design the architecture in advance, i might have saved a lot of time. Then again it might have been too big of an effort to build everything right from scratch wuth just the design as reference.
+
+In university and in some articles allocating resources has been an important subject. Most often the resource discusse has been memory, with files andc network connections mentioned as well. I read an article about design of low-latencey audio programs that explained the importance of time as a resource, especially in interactive applications.
+
+In this project a variety of different resources have to be taken into account: threads, devices, server connections (JACK callback function), and ofcourse time. Object orientedness makes it easy not to mix the resources into one big mess. Threads are neatly contained in classes and do all the timing-non-critical work for the timing-critical parts of the software. Devices are also a non-shared resource. Each device is owned bya class and the data is then shared by the class that governs them (via public variables).
+
+Even though it's not considered good practice to code first and document then , i'll still do the shematics afterwards. This is for me to learn and get a routine of actually making the scematics and diagramsm, not to speak of their value as graphic elements in my albums and flyers.

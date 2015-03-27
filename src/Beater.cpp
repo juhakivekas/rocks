@@ -11,15 +11,20 @@ float uint8_to_float(int value){
 }
 
 int process(jack_nframes_t nframes, void *arg){
-	Beater *ctx = (Beater*) arg;
+	//the bytebeat counter, initialized once
 	static int t_glob = 0;
+
+	Beater *beater = (Beater*) arg;
+	//update the interface context variables
+	beater->context->update();
+
 	int i, j, t;
 	sample_t *buffer;
-	for(j=0; j<ctx->numbeats; j++){
-		buffer = (sample_t*) jack_port_get_buffer (ctx->beat[j]->port, nframes);
+	for(j=0; j<beater->numbeats; j++){
+		buffer = (sample_t*) jack_port_get_buffer (beater->beat[j]->port, nframes);
 		t = t_glob;
 		for(i=0; i<(int) nframes; i++){
-			buffer[i] = uint8_to_float(ctx->beat[j]->func(t));
+			buffer[i] = uint8_to_float(beater->beat[j]->func(t, &beater->context->data));
 			t++;
 		}
 	}
@@ -27,7 +32,8 @@ int process(jack_nframes_t nframes, void *arg){
 	return 0;
 }
 
-Beater::Beater(const char *client_name){
+Beater::Beater(Context * ctx, const char *client_name){
+	context = ctx;
 	numbeats = 0;
 	jack_status_t status;
 	client = jack_client_open(client_name, JackNoStartServer, &status);
@@ -36,6 +42,9 @@ Beater::Beater(const char *client_name){
 		exit(1);
 	}
 	jack_set_process_callback(client, process, (void*) this);
+
+	//construct a context
+	fprintf(stderr, "JACK client opened.\n");
 }
 
 int Beater::activate(){
@@ -45,6 +54,7 @@ int Beater::activate(){
 		fprintf(stderr, "Error while activating JACK client, status:%d.\n", status);
 		return 1;
 	}
+	fprintf(stderr, "JACK client activated.\n");
 	return 0;
 }
 

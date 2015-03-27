@@ -36,6 +36,7 @@ mineral.out:\
 #Gamepad controlled JACK bytebeats
 whiskey.out:\
 	bin/Beater.o\
+	bin/Context.o\
 	bin/Bytebeat.o\
 	bin/Gamepad.o\
 	bin/whiskey.o
@@ -44,6 +45,8 @@ whiskey.out:\
 #JACK bytebeats
 beat.out:\
 	bin/Beater.o\
+	bin/Context.o\
+	bin/Gamepad.o\
 	bin/Bytebeat.o\
 	bin/beat.o
 	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
@@ -67,6 +70,7 @@ Gamepad_test.out:\
 objects:\
 	bin/Gamepad.o\
 	bin/Beater.o\
+	bin/Context.o\
 	bin/Bytebeat.o
 
 bin/%.o: src/%.cpp

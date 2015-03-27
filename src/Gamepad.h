@@ -41,7 +41,13 @@ public:
 	//range is from 0 to (1<<16), the zero state is (2<<15).
 	int32_t analog[6];
 
+	//getter for nice looking button reads
+	int button(int i){
+		return (digital & (1<<i)) != 0;
+	};
+
 	//construct and destruct
+	Gamepad();
 	Gamepad(const char* device);
 	~Gamepad();
 
@@ -52,16 +58,12 @@ public:
 	uint8_t raw[RAW_LENGTH];	//raw USB-HID data
 
 
-	//getter for nice looking button reads
-	int button(int i){
-		return (digital & (1<<i)) != 0;
-	};
-
 	//these have to be public so that they can be called from within a thread
 	int read_raw();
 	int format();
 
 private:	
+	bool listening;
 	//device and thread overhead
 	int fd;						//device file descriptor
 	pthread_t listener;			//listener thread ID
