@@ -15,6 +15,5 @@ int main(){
 	Context context = Context(&gamepad);
 	Beater JACK = Beater(&context, "beater");
 	JACK.add_beat(beat_0, "0");
-	JACK.activate();
 	sleep(60);
 }

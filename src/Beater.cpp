@@ -32,30 +32,28 @@ int process(jack_nframes_t nframes, void *arg){
 	return 0;
 }
 
-Beater::Beater(Context * ctx, const char *client_name){
+Beater::Beater(Context * ctx, const char *name){
 	context = ctx;
+	strncpy(client_name, name, 64);
 	numbeats = 0;
 	jack_status_t status;
+	int status_int;
+
 	client = jack_client_open(client_name, JackNoStartServer, &status);
 	if (client == NULL) {
 		fprintf(stderr, "JACK server not running?\n");
 		exit(1);
 	}
-	jack_set_process_callback(client, process, (void*) this);
-
-	//construct a context
 	fprintf(stderr, "JACK client opened.\n");
-}
 
-int Beater::activate(){
-	int status;
-	status = jack_activate(client);
-	if (status) {
+	jack_set_process_callback(client, process, (void*) this);
+	status_int = jack_activate(client);
+	if (status_int) {
 		fprintf(stderr, "Error while activating JACK client, status:%d.\n", status);
-		return 1;
+		exit(1);
 	}
 	fprintf(stderr, "JACK client activated.\n");
-	return 0;
+	//construct a context
 }
 
 Beater::~Beater(){
@@ -68,7 +66,13 @@ Beater::~Beater(){
 
 void Beater::add_beat(bytebeat_func func, const char* name){
 	Bytebeat *b = new Bytebeat(func, name);
-	b->port = jack_port_register(client, b->name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 	beat[numbeats] = b;
 	numbeats++;
+	//register the new port
+	b->port = jack_port_register(client, b->name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	//connect the new port
+	char portname[128];
+	sprintf(portname, "%s:%s", client_name, b->name);
+	jack_connect(client, portname, "system:playback_1");
+	jack_connect(client, portname, "system:playback_2");
 }

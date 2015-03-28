@@ -4,9 +4,9 @@
 #include "Gamepad.h"
 
 typedef struct char_data {
-	char lx, ly;
-	char rx, ry;
-	char d;
+	unsigned char lx, ly;
+	unsigned char rx, ry;
+	unsigned char d;
 	//define the data you want to use in your bytebeats here
 }char_data;
 

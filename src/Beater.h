@@ -20,6 +20,7 @@ class Beater{
 public:
 	
 	jack_client_t *client;
+	char client_name[64];
 
 	Context *context;
 
@@ -28,7 +29,6 @@ public:
 	
 	Beater(Context* ctx, const char* name);
 	~Beater();
-	int activate();
 	void add_beat(bytebeat_func func, const char* name);
 };
 
