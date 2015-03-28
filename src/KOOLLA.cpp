@@ -42,7 +42,7 @@ float					rot_z_vel = 50.0, rot_y_vel = 30.0;
 	glVertex3f((x)-(size), (y+size), (z));\
 
 #define BORDER 0.0
-#include "../../rubble/src/Gamepad.h"
+#include "Gamepad.h"
 Gamepad g = Gamepad("/dev/input/js0");
 void Draw(float ratio) {
 	glBegin(GL_QUADS);
