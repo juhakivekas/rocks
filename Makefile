@@ -4,13 +4,17 @@
 CPPC=g++
 JACKFLAGS= -lpthread -ljack -ldl -lrt -lm
 ALSAFLAGS= -lpthread -lasound -ldl -lm
-X11FLAGS= -lX11
+GFXFLAGS= -lX11 -lGL -l GLU
 CPPFLAGS=-g -Wall -std=c++11 -lpthread #$(JACKFLAGS)
 
-
-all: compile test
-compile: objects rubble.out beat.out whiskey.out mineral.out
-#slide.out
+all:\
+	objects\
+	rubble.out\
+	beat.out\
+	whiskey.out\
+	KOOLLA.out\
+	GLX_test.out\
+	GLX_animation.out\
 
 test:\
 	Gamepad_test.out
@@ -19,19 +23,21 @@ test:\
 
 #--------EXECUTABLES--------
 
-#X11 graphics demo
-slide.out:\
-	bin/simple_drawing.o
-	$(CPPC) -o $@ $^ $(CPPFLAGS) $(X11FLAGS)
-#	bin/X11_display.o
-	 
+#AAVE KOOLLA visuals
+KOOLLA.out:\
+	bin/KOOLLA.o\
+	bin/Gamepad.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(GFXFLAGS)
 
-#Gamepad controlled Framebuffer graphics
-mineral.out:\
-	bin/Framebuffer.o\
-	bin/Gamepad.o\
-	bin/mineral.o
-	$(CPPC) -o $@ $^ $(CPPFLAGS)
+#GLX animation test from: https://www.opengl.org/wiki/Programming_OpenGL_in_Linux:_Programming_Animations_with_GLX_and_Xlib
+GLX_animation.out:\
+	bin/GLX_animation.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(GFXFLAGS)
+
+#GLX test from: https://www.opengl.org/wiki/Programming_OpenGL_in_Linux:_GLX_and_Xlib
+GLX_test.out:\
+	bin/GLX_test.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(GFXFLAGS)
 
 #Gamepad controlled JACK bytebeats
 whiskey.out:\
