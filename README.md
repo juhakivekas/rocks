@@ -30,6 +30,9 @@ Now the JACK ports have to be connected to the system output sound. You can do t
 
 ## Dependencies
 
+
+#### Audio stack
+
 The project depends on [jack audio](http://www.jackaudio.org/) for audio interfaces. These need to be installed in order to compile and run teh software.
 
 install jack audio library development files:
@@ -40,5 +43,12 @@ install jack audio daemon:
 
 	sudo apt-get install jackd1
 	
-During the installation of jackd you will be prompted whether to add realtime permissions to the audio group. 
+During the installation of jackd you will need to allow realtime permissions for the "audio" group. 
 You will need to log out and log back in to you user account for the permission changes to become effective.
+
+#### Graphics stack
+
+Mesa graphics library.
+
+	sudo apt-get install libgl1-mesa-dev
+	sudo apt-get install libglu1-mesa-dev 
