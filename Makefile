@@ -10,7 +10,6 @@ CPPFLAGS=-g -Wall -std=c++11 -lpthread #$(JACKFLAGS)
 all:\
 	objects\
 	rubble.out\
-	beat.out\
 	whiskey.out\
 	KOOLLA.out\
 	GLX_test.out\
@@ -45,16 +44,8 @@ whiskey.out:\
 	bin/Context.o\
 	bin/Bytebeat.o\
 	bin/Gamepad.o\
+	bin/BpmClock.o\
 	bin/whiskey.o
-	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
-
-#JACK bytebeats
-beat.out:\
-	bin/Beater.o\
-	bin/Context.o\
-	bin/Gamepad.o\
-	bin/Bytebeat.o\
-	bin/beat.o
 	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
 
 #Gamepad tester/skeleton
@@ -77,7 +68,8 @@ objects:\
 	bin/Gamepad.o\
 	bin/Beater.o\
 	bin/Context.o\
-	bin/Bytebeat.o
+	bin/Bytebeat.o\
+	bin/BpmClock.o
 
 bin/%.o: src/%.cpp
 	$(CPPC) -c -o $@ $^ $(CPPFLAGS)

@@ -57,7 +57,7 @@ void Draw(float ratio) {
 		for(i=0; i<13; i++){
 			if((i^j)&1){
 				//set 5
-				//glColor3f(0.7, 1.0, 0.0);
+				glColor3f(0.7, 1.0, 0.0);
 				size = 0;
 				if(g.button(5)) size += (i&j);
 				if(g.button(6)) size += ((12-i)&(12-j));
@@ -66,17 +66,17 @@ void Draw(float ratio) {
 				square(x,y,1,size);
 			}else if(i&j&1){
 				//set 4
-				//glColor3f(0.5, 1.0, 1.0);
+				glColor3f(0.5, 1.0, 1.0);
 				square(x,y,3,(((i+j)&3)+1)*g.analog[LY]/8000000.0);
 			}else if(((i^j)&0x2)){
 				//set 2
-				//glColor3f(1.0, 0.5, 0.0);
+				glColor3f(1.0, 0.5, 0.0);
 				size=8;
 				if(g.button(8)) size += (((i+1)*j)&0xf);
 				square(x,y,4,size*g.analog[RY]/60000000.0);
 			}else if(((i|j)&0x3)==0){
 				//set 1
-				//glColor3f(0.3, 0.0, 0.3);
+				glColor3f(0.3, 0.0, 0.3);
 				if(g.button(7)){
 					square(x,y,5,g.analog[RX]/2000000.0);
 				}

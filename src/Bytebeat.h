@@ -10,7 +10,7 @@
 
 #include "Context.h"
 
-typedef char (*bytebeat_func)(int t, char_data *d);
+typedef unsigned char (*bytebeat_func)(int t, char_data *d);
 
 class Bytebeat{
 public:
