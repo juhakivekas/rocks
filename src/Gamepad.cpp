@@ -13,9 +13,9 @@ Gamepad::Gamepad(const char* device){
 
 	//open device filedescriptor
 	fd = open(device, O_RDONLY);
-	if(fd == 0){
-		perror("Error opening Gamepad device: ");
-		printf("Cannot open %s, exiting.\n", device);
+	if(fd == -1){
+		perror("Error opening Gamepad device");
+		printf("Cannot open \"%s\"\n", device);
 		exit(1);
 	}
 
@@ -45,9 +45,8 @@ int Gamepad::read_raw(){
 	//XXX is this endianness dependent?
 	int status = read(fd, (void*)raw, RAW_LENGTH);
 	if(status < 0){
-		perror("Error reading Gamepad device: ");
+		perror("Error reading Gamepad device");
 		exit(1);
-		//return 1;
 	}
 	//debug output
 	//printf("Time: %02x%02x%02x%02x\n", raw[0], raw[1], raw[2], raw[3]);

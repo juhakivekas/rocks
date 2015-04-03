@@ -10,10 +10,11 @@ CPPFLAGS=-g -Wall -std=c++11 -lpthread #$(JACKFLAGS)
 all:\
 	objects\
 	rubble.out\
-	whiskey.out\
+	playable.out\
 	KOOLLA.out\
 	GLX_test.out\
 	GLX_animation.out\
+	Fourier_view.out
 
 test:\
 	Gamepad_test.out
@@ -21,6 +22,13 @@ test:\
 
 
 #--------EXECUTABLES--------
+
+#Fourier transform testcode
+Fourier_view.out:\
+	bin/Fourier.o\
+	bin/Fourier_view.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
+	
 
 #AAVE KOOLLA visuals
 KOOLLA.out:\
@@ -39,13 +47,13 @@ GLX_test.out:\
 	$(CPPC) -o $@ $^ $(CPPFLAGS) $(GFXFLAGS)
 
 #Gamepad controlled JACK bytebeats
-whiskey.out:\
+playable.out:\
 	bin/Beater.o\
 	bin/Context.o\
 	bin/Bytebeat.o\
 	bin/Gamepad.o\
 	bin/BpmClock.o\
-	bin/whiskey.o
+	bin/playable.o
 	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
 
 #Gamepad tester/skeleton
@@ -69,7 +77,8 @@ objects:\
 	bin/Beater.o\
 	bin/Context.o\
 	bin/Bytebeat.o\
-	bin/BpmClock.o
+	bin/BpmClock.o\
+	bin/Fourier.o
 
 bin/%.o: src/%.cpp
 	$(CPPC) -c -o $@ $^ $(CPPFLAGS)

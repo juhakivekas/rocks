@@ -53,7 +53,6 @@ Beater::Beater(Context * ctx, const char *name){
 		exit(1);
 	}
 	fprintf(stderr, "JACK client activated.\n");
-	//construct a context
 }
 
 Beater::~Beater(){
