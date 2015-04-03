@@ -20,6 +20,12 @@ public:
 
 	//this is what we update, get, set and pass to the beats
 	char_data data;
+	//the bytebeat counter
+	//int t;
+	float t;
+	float t_diff;
+	
+
 
 	//construct and destruct
 	Context(Gamepad* gamepad, BpmClock* clock);

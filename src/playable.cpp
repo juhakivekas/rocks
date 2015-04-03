@@ -37,16 +37,21 @@ unsigned char beat_4(int t, char_data *d){
 	return t|mask;
 }
 
+unsigned char beat_5(int t, char_data *d){
+	return (t<<(rx>>6));
+}
+
 int main(){
 	Gamepad gamepad = Gamepad("/dev/input/js0");
 	BpmClock clock = BpmClock(60.0);
 	Context context = Context(&gamepad, &clock);
 	Beater JACK = Beater(&context, "beater");
-	//JACK.add_beat(beat_0, "0");
-	//JACK.add_beat(beat_1, "1");
-	//JACK.add_beat(beat_2, "2");
-	//JACK.add_beat(beat_3, "3");
+	JACK.add_beat(beat_0, "0");
+	JACK.add_beat(beat_1, "1");
+	JACK.add_beat(beat_2, "2");
+	JACK.add_beat(beat_3, "3");
 	JACK.add_beat(beat_4, "4");
+	//JACK.add_beat(beat_5, "5");
 	//press button 10 to quit
 	while(!gamepad.button(10));
 }

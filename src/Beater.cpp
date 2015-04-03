@@ -11,24 +11,26 @@ float uint8_to_float(int value){
 }
 
 int process(jack_nframes_t nframes, void *arg){
-	//the bytebeat counter, initialized once
-	static int t_glob = 0;
-
 	Beater *beater = (Beater*) arg;
 	//update the interface context variables
 	beater->context->update();
 
-	int i, j, t;
+	int i, j;
+	float t;
 	sample_t *buffer;
 	for(j=0; j<beater->numbeats; j++){
 		buffer = (sample_t*) jack_port_get_buffer (beater->beat[j]->port, nframes);
-		t = t_glob;
+		t = beater->context->t;
 		for(i=0; i<(int) nframes; i++){
-			buffer[i] = uint8_to_float(beater->beat[j]->func(t, &beater->context->data));
-			t++;
+			buffer[i] = uint8_to_float(beater->beat[j]->func((int)t, &beater->context->data));
+			//t++;
+			t += beater->context->t_diff;
 		}
 	}
-	t_glob += nframes;
+
+	//here is documented a fixed bug relating to floating point errors:
+	//printf("%f\t%f\n", t - beater->context->t, nframes*beater->context->t_diff);
+	beater->context->t = t; 
 	return 0;
 }
 
