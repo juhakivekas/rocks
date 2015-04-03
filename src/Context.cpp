@@ -16,6 +16,8 @@ order to avoid accumulated floating point error,
 that could set the instrument out of tune*/
 #define T_MAX ((float)(1<<16))
 
+#define JACK_SAMPLERATE 48000
+
 void Context::update(){
 	data.lx = g->analog[LX]>>8;
 	data.ly = g->analog[LY]>>8;
