@@ -1,0 +1,4 @@
+AAVE KOOLLA performance notes
+-----------------------------
+
+Valtteris húman step sequencer outputs the data on only one of the channels

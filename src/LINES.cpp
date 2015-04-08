@@ -30,58 +30,68 @@ GLfloat					rotation_matrix[16];
 //  DRAW GRAPHICS                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 
-#define square(x,y,z,size) \
-	glVertex3f((x)-(size), (y-size), (z));\
-	glVertex3f((x)+(size), (y-size), (z));\
-	glVertex3f((x)+(size), (y+size), (z));\
-	glVertex3f((x)-(size), (y+size), (z));\
+int NUMLINES = 3;
+int NUMBARS = 4;
+
+typedef struct point{
+	float x, y;
+}point;
+typedef point vector;
+
+typedef struct line{
+	point a, b;
+}line;
+
+typedef struct range{
+	float s, e;//start and end
+}range;
+
+
+line lines[32] = {
+	{{0.0, 0.1},{0.1, 0.9}},
+	{{0.2, 0.05},{0.2, 0.6}},
+	{{1.0, 0.3},{0.8, 1.0}}
+};
+
+range bars[128] = {
+	{0.0, 0.1},
+	{0.2, 0.4},
+	{0.45, 0.5},
+	{0.8, 0.95}
+};
+//initialize the rendering data
+void init_data(){
+	srand(123);
+	int i,j,k;
+	for(i=0; i<5; i++){
+		lines[i].a.x = rand();
+	}
+}
 
 #define BORDER 0.0
 #include "Gamepad.h"
 Gamepad g = Gamepad("/dev/input/js0");
 void Draw(float ratio) {
-	glBegin(GL_QUADS);
-
-	float xstep = ratio/13.0;
-	float ystep = 1.0/13.0;
-	float x=xstep/2, y=ystep/2;
-	float size;
-	int i, j;
 	glColor3f(1.0, 1.0, 1.0);
-	for(j=0; j<13; j++){
-		for(i=0; i<13; i++){
-			if((i^j)&1){
-				//set 5
-				glColor3f(0.7, 1.0, 0.0);
-				size = 0;
-				if(g.button(5)) size += (i&j);
-				if(g.button(6)) size += ((12-i)&(12-j));
-				size *= g.analog[LX]/40000000.0;
-				
-				square(x,y,1,size);
-			}else if(i&j&1){
-				//set 4
-				glColor3f(0.5, 1.0, 1.0);
-				square(x,y,3,(((i+j)&3)+1)*g.analog[LY]/8000000.0);
-			}else if(((i^j)&0x2)){
-				//set 2
-				glColor3f(1.0, 0.5, 0.0);
-				size=8;
-				if(g.button(8)) size += (((i+1)*j)&0xf);
-				square(x,y,4,size*g.analog[RY]/60000000.0);
-			}else if(((i|j)&0x3)==0){
-				//set 1
-				glColor3f(0.3, 0.0, 0.3);
-				if(g.button(7)){
-					square(x,y,5,g.analog[RX]/2000000.0);
-				}
-			}
-			x += xstep;
+	int i,j;
+	vector ab;
+	for(i=0; i<NUMBARS; i++){
+		glBegin(GL_QUAD_STRIP);
+		for(j=0; j<NUMLINES; j++){
+			ab.x = lines[j].b.x - lines[j].a.x;
+			ab.y = lines[j].b.y - lines[j].a.y;
+			glVertex3f(
+				lines[j].a.x + bars[i].s*ab.x,
+				lines[j].a.y + bars[i].s*ab.y,
+				0);
+			glVertex3f(
+				lines[j].a.x + bars[i].e*ab.x,
+				lines[j].a.y + bars[i].e*ab.y,
+				0);
 		}
-		y += ystep;
-		x = xstep/2;
+		glEnd();
 	}
-	glEnd();
+	//glLineWidth(1);
 }
 ///////////////////////////////////////////////////////////////////////////////
 //  EXPOSURE FUNCTION                                                        //
@@ -99,7 +109,7 @@ void ExposeFunc() {
 	/////////////////////////////////////////
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-BORDER, aspect_ratio+BORDER, -BORDER, 1.0+BORDER, 1., 100.);
+	glOrtho(0, aspect_ratio, 0, 1.0, 1.0, 100.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -110,12 +120,6 @@ void ExposeFunc() {
 	/////////////////////////////////
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	Draw(aspect_ratio);
-	/////////////////////////////////
-	//  DISPLAY TIME, FPS etc.     //
-	/////////////////////////////////
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, (float)wa.width, 0, (float)wa.height, -1., 1.);
 
 	/////////////////////////////////
 	//  SWAP BUFFERS               //
@@ -182,8 +186,12 @@ void ExitProgram() {
 int main(int argc, char *argv[]){
 	CreateWindow();
 	SetupGL();
+	init_data();
 	while(true) {
 		ExposeFunc(); 
 		usleep(1000);
+		if(g.button(10)){
+			ExitProgram();
+		}
 	}
 }

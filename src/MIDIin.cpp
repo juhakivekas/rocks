@@ -45,26 +45,29 @@ int MIDIin::read_raw(){
 		exit(1);
 	}
 	//debug output
-	//printf("Type: %02x Channel: %02x Value: %02x\n", raw[0], raw[1], raw[2]);
+	//printf("Type: %02x Note: %02x Velocity: %02x\n", raw[0], raw[1], raw[2]);
 	return 0;
 }
 
 #define CHAN_CTRL 0xb1
-#define NOTE_ON   0x91
-#define NOTE_OFF  0x81
+//#define NOTE_ON   0x91
+//#define NOTE_OFF  0x81
+#define NOTE_ON   0x90
+#define NOTE_OFF  0x80
 int MIDIin::format(){
-	unsigned char type    = raw[0];
-	unsigned char channel = raw[1];
-	unsigned char value   = raw[2];
+	unsigned char type     = raw[0];
+	unsigned char value    = raw[1];
+	unsigned char velocity = raw[2];
 
 	if(type == NOTE_ON){
-	}else if(type == NOTE_OFF){
-	}else if(type == CHAN_CTRL){
 		note = value;
+	}else if(type == NOTE_OFF){
+		//note = 0;	
+	}else if(type == CHAN_CTRL){
 	}else{
 		fprintf(stderr, "Error in MIDI data formatting\n");
-		fprintf(stderr, "type:%d\n", type);
-		fprintf(stderr, "chan:%d\n", channel);
+		fprintf(stderr, "note:%d\n", value);
+		fprintf(stderr, "velo:%d\n", velocity);
 		//something fucked up
 		return 1;
 	}
@@ -77,7 +80,7 @@ static void* listen(void* arg){
 	while(g->read_raw() == 0){
 		g->format();
 		//place format prints here if you want to check something
-		//printf("%02x\n", g->note);
+		//printf("%02x %02x\n", g->note, g->raw[1]);
 	}
 	return NULL;
 }

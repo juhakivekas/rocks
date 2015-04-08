@@ -10,6 +10,7 @@ typedef struct char_data {
 	unsigned char lx, ly;
 	unsigned char rx, ry;
 	unsigned char d;
+	unsigned char note;
 	//define the data you want to use in your bytebeats here
 }char_data;
 
