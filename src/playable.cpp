@@ -9,7 +9,7 @@
 #define r  (d->r)
 
 unsigned char beat_0(int t, char_data *d){
-	return ((t<<1&(0x100|(1<<lx)))?~t:t)^ly;
+	return ((t<<1&(0x100/*|(1<<lx)*/))?~t:t);//^ly;
 }
 
 unsigned char beat_1(int t, char_data *d){
@@ -29,24 +29,21 @@ unsigned char beat_3(int t, char_data *d){
 }
 
 unsigned char beat_4(int t, char_data *d){
-	int mask = rx&0xf0;
-	/*while((~mask & 0x80) != 0){
-		mask <<= 1;
-		t<<=1;
-	}*/
-	return t&mask;
+	return t&1?0xff:0x00;
 }
 
 int main(){
-	Gamepad gamepad = Gamepad("/dev/input/js0");
+	//Gamepad gamepad = Gamepad("/dev/input/js0");
+	Gamepad gamepad = Gamepad();
+	MIDIin midiin = MIDIin("/dev/snd/midiC1D0");
 	BpmClock clock = BpmClock(60.0);
-	Context context = Context(&gamepad, &clock);
+	Context context = Context(&gamepad, &clock, &midiin);
 	Beater JACK = Beater(&context, "beater");
-	//JACK.add_beat(beat_0, "0");
+	JACK.add_beat(beat_0, "0");
 	//JACK.add_beat(beat_1, "1");
 	//JACK.add_beat(beat_2, "2");
 	//JACK.add_beat(beat_3, "3");
-	JACK.add_beat(beat_4, "4");
+	//JACK.add_beat(beat_4, "4");
 	//press button 10 to quit
 	while(!gamepad.button(10));
 }

@@ -1,5 +1,5 @@
 //frequencies indexed by their MIDI values
-int freq[] = {
+float freq[] = {
 	8.175798915643707,
 	8.661957218027252,
 	9.177023997418988,

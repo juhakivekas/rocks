@@ -14,6 +14,7 @@ all:\
 	KOOLLA.out\
 	GLX_test.out\
 	GLX_animation.out\
+	MIDI_rubble.out\
 	Fourier_view.out
 
 test:\
@@ -22,6 +23,12 @@ test:\
 
 
 #--------EXECUTABLES--------
+
+#MIDI input tester
+MIDI_rubble.out:\
+	bin/MIDIin.o\
+	bin/MIDI_rubble.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS)
 
 #Fourier transform testcode
 Fourier_view.out:\
@@ -53,6 +60,7 @@ playable.out:\
 	bin/Bytebeat.o\
 	bin/Gamepad.o\
 	bin/BpmClock.o\
+	bin/MIDIin.o\
 	bin/playable.o
 	$(CPPC) -o $@ $^ $(CPPFLAGS) $(JACKFLAGS)
 
@@ -78,6 +86,7 @@ objects:\
 	bin/Context.o\
 	bin/Bytebeat.o\
 	bin/BpmClock.o\
+	bin/MIDIin.o\
 	bin/Fourier.o
 
 bin/%.o: src/%.cpp

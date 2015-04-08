@@ -1,11 +1,13 @@
 #include "Context.h"
+#include "freq.h"
 #include <cstdio>
 
-Context::Context(Gamepad *gamepad, BpmClock* clock){
+Context::Context(Gamepad *gamepad, BpmClock *clock, MIDIin *midiin){
 	t = 0;
 	t_diff = 1;
 	g = gamepad;
 	c = clock;
+	m = midiin;
 }
 
 Context::~Context(){
@@ -19,6 +21,7 @@ that could set the instrument out of tune*/
 #define JACK_SAMPLERATE 48000
 
 void Context::update(){
+
 	data.lx = g->analog[LX]>>8;
 	data.ly = g->analog[LY]>>8;
 	data.rx = g->analog[RX]>>8;
@@ -27,7 +30,9 @@ void Context::update(){
 
 	data.r = c->pulse;
 
-	t_diff = 1+ (g->analog[LY]/65536.0);
-	//simulated overflow
+	unsigned int note = m->note;
+	t_diff = (freq[note]*128.0)/JACK_SAMPLERATE;
+
+	//simulated overflow to keep floating point accuracy high
 	if(t>T_MAX) t -= T_MAX;
 }
