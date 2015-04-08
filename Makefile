@@ -12,6 +12,7 @@ all:\
 	rubble.out\
 	playable.out\
 	KOOLLA.out\
+	LINES.out\
 	GLX_test.out\
 	GLX_animation.out\
 	MIDI_rubble.out\
@@ -23,6 +24,12 @@ test:\
 
 
 #--------EXECUTABLES--------
+
+#visuals with lines
+LINES.out:\
+	bin/LINES.o\
+	bin/Gamepad.o
+	$(CPPC) -o $@ $^ $(CPPFLAGS) $(GFXFLAGS)
 
 #MIDI input tester
 MIDI_rubble.out:\
