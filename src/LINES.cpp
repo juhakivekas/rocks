@@ -9,6 +9,7 @@
 #include<sys/time.h>
 #include<X11/Xlib.h>
 #include<X11/XKBlib.h>
+#include<X11/Xatom.h>
 #include<GL/glx.h>
 #include<GL/glext.h>
 #include<GL/glu.h>
@@ -30,8 +31,8 @@ GLfloat					rotation_matrix[16];
 //  DRAW GRAPHICS                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 
-int NUMLINES = 3;
-int NUMBARS = 4;
+int numlines = 10;
+int numbars;
 
 typedef struct point{
 	float x, y;
@@ -39,17 +40,21 @@ typedef struct point{
 typedef point vector;
 
 typedef struct line{
+	//the points
 	point a, b;
+	//the movement vectors
+	vector av, bv;
+	vector avv, bvv;
 }line;
 
 typedef struct range{
 	float s, e;//start and end
+	float r,g,b;
 }range;
 
 
 line lines[32] = {
 	{{0.0, 0.1},{0.1, 0.9}},
-	{{0.2, 0.05},{0.2, 0.6}},
 	{{1.0, 0.3},{0.8, 1.0}}
 };
 
@@ -59,25 +64,123 @@ range bars[128] = {
 	{0.45, 0.5},
 	{0.8, 0.95}
 };
-//initialize the rendering data
-void init_data(){
-	srand(123);
-	int i,j,k;
-	for(i=0; i<5; i++){
-		lines[i].a.x = rand();
-	}
-}
 
-#define BORDER 0.0
 #include "Gamepad.h"
 Gamepad g = Gamepad("/dev/input/js0");
+
+//Gamepad g = Gamepad();
+
+float randf(float min, float max){
+	return min + ((rand()%1000)/1000.0) * (max-min);
+}
+
+#define upper_screen 1.5
+#define lower_screen -0.5
+#define upper_velocity 0.1
+#define lower_velocity -0.1
+void limit_to(float *f, float upper, float lower){
+	if(*f > upper) *f = upper;
+	if(*f < lower) *f = lower;
+}
+
+void refresh_data(){
+	int i;
+	float noise = g.analogf(RX)*2;
+	if(g.button(5)) noise = 1;
+	if(g.button(7)) noise = 2;
+	if(g.button_toggle(2)) noise += 0.02;
+	if(g.button_toggle(3)) noise += 0.04;
+	if(g.button_toggle(4)) noise += 0.08;
+	noise *= 0.01;
+	for(i=0; i<numlines; i++){
+		lines[i].avv.x += randf(-noise, noise);
+		lines[i].avv.y += randf(-noise, noise);
+		lines[i].bvv.x += randf(-noise, noise);
+		lines[i].bvv.y += randf(-noise, noise);
+		
+		lines[i].avv.x *= 0.5;
+		lines[i].avv.y *= 0.5;
+		lines[i].bvv.x *= 0.5;
+		lines[i].bvv.y *= 0.5;
+
+		lines[i].av.x += lines[i].avv.x;
+		lines[i].av.y += lines[i].avv.y;
+		lines[i].bv.x += lines[i].bvv.x;
+		lines[i].bv.y += lines[i].bvv.y;
+
+		lines[i].av.x *= 0.9;
+		lines[i].av.y *= 0.9;
+		lines[i].bv.x *= 0.9;
+		lines[i].bv.y *= 0.9;
+
+		lines[i].a.x += lines[i].av.x;
+		lines[i].a.y += lines[i].av.y;
+		lines[i].b.x += lines[i].bv.x;
+		lines[i].b.y += lines[i].bv.y;
+	}
+
+	//make sure shit is not going too far
+	for(i=0; i<numlines; i++){
+		limit_to(&lines[i].a.x, upper_screen, lower_screen);
+		limit_to(&lines[i].a.y, upper_screen, lower_screen);
+		limit_to(&lines[i].b.x, upper_screen, lower_screen);
+		limit_to(&lines[i].b.y, upper_screen, lower_screen);
+		limit_to(&lines[i].av.x, upper_velocity, lower_velocity);
+		limit_to(&lines[i].av.y, upper_velocity, lower_velocity);
+		limit_to(&lines[i].bv.x, upper_velocity, lower_velocity);
+		limit_to(&lines[i].bv.y, upper_velocity, lower_velocity);
+	}
+
+	i=0;	
+	float f=0.0;
+	static int prev_six = 0;
+	static int curr_six = 0;
+	curr_six = g.button(6);
+	if(curr_six && !prev_six){
+		while(f<1.0 && i < 128){
+			//start and end
+			f += randf(0,g.analogfp(LX)/10.0);
+			bars[i].s = f;
+			f += randf(0,g.analogfp(LY)/10.0)+0.001;
+			bars[i].e = f;
+		
+			bars[i].r = randf(0.0, 1.0);	
+			bars[i].g = randf(0.0, 1.0);	
+			bars[i].b = randf(0.0, 1.0);	
+			i++;
+		}
+		numbars = i;
+	}
+	prev_six = curr_six;
+	usleep(10000);
+}
+#define BORDER 0.0
 void Draw(float ratio) {
-	glColor3f(1.0, 1.0, 1.0);
 	int i,j;
 	vector ab;
-	for(i=0; i<NUMBARS; i++){
+	if(g.button_toggle(1)){
+		glColor3f(1.0, 1.0, 1.0);
+		glBegin(GL_QUADS);
+		glVertex3f(-2,-2,-1);
+		glVertex3f(2,-2,-1);
+		glVertex3f(2,2,-1);
+		glVertex3f(-2,2,-1);
+		glEnd();
+		glColor3f(0.0, 0.0, 0.0);
+	}else{
+		glColor3f(0.0, 0.0, 0.0);
+		glBegin(GL_QUADS);
+		glVertex3f(-2,-2,-1);
+		glVertex3f(2,-2,-1);
+		glVertex3f(2,2,-1);
+		glVertex3f(-2,2,-1);
+		glEnd();
+		glColor3f(1.0, 1.0, 1.0);
+	}
+	for(i=0; i<numbars; i++){
 		glBegin(GL_QUAD_STRIP);
-		for(j=0; j<NUMLINES; j++){
+		if(g.button_toggle(8))glColor3f(bars[i].r, bars[i].g, bars[i].b);
+		for(j=0; j<numlines; j++){
 			ab.x = lines[j].b.x - lines[j].a.x;
 			ab.y = lines[j].b.y - lines[j].a.y;
 			glVertex3f(
@@ -116,8 +219,9 @@ void ExposeFunc() {
 	//looking from above, y facing up.
 	gluLookAt(0., 0., 10., 0., 0., 0., 0., 1., 0.);
 	/////////////////////////////////
-	//  DRAW CUBE                  //
+	//  DRAW STUFF                 //
 	/////////////////////////////////
+	refresh_data();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	Draw(aspect_ratio);
 
@@ -154,6 +258,7 @@ void CreateWindow() {
 	XStoreName(dpy, win, "KOOLLA");
 	XMapWindow(dpy, win);
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 //  SETUP GL CONTEXT                                                         //
 ///////////////////////////////////////////////////////////////////////////////
@@ -184,9 +289,9 @@ void ExitProgram() {
 //  MAIN PROGRAM                                                             //
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]){
+	srand(1234);
 	CreateWindow();
 	SetupGL();
-	init_data();
 	while(true) {
 		ExposeFunc(); 
 		usleep(1000);

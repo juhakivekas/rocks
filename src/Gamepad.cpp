@@ -7,6 +7,7 @@ Gamepad::Gamepad(){
 Gamepad::Gamepad(const char* device){
 	//null everything
 	digital = 0;
+	digital_toggle = 0;
 	time = 0;
 	int i;
 	for(i=0; i<6; i++) analog[i] = 0;
@@ -76,6 +77,7 @@ int Gamepad::format(){
 		//edit the bitmask of buttons
 		if(digital_value == 1){
 			digital |=  (1<<channel);
+			digital_toggle ^= 1<<channel;
 		}else{
 			digital &= ~(1<<channel);
 		}

@@ -36,6 +36,7 @@ public:
 	//digital/button inputs are numbered as in the controller
 	//ie. the button labeled "1" is bit number 1
 	uint32_t digital;
+	uint32_t digital_toggle;
 
 	//analog channels ordered according to the axis enumerator
 	//range is from 0 to (1<<16), the zero state is (2<<15).
@@ -46,6 +47,16 @@ public:
 		return (digital & (1<<i)) != 0;
 	};
 
+	int button_toggle(int i){
+		return (digital_toggle & (1<<i)) != 0;
+	}
+
+	float analogf(int channel){
+		return (analog[channel]-(1<<15))/32768.0;
+	}
+	float analogfp(int channel){
+		return analog[channel]/65536.0;
+	}
 	//construct and destruct
 	Gamepad();
 	Gamepad(const char* device);
