@@ -27,8 +27,8 @@ unsigned char beat_nomidi(int t, char_data *d){
 int main(){
 	Gamepad gamepad = Gamepad("/dev/input/js0");
 	//Gamepad gamepad = Gamepad();
-	//MIDIin midiin = MIDIin("/dev/snd/midiC1D0");
-	MIDIin midiin = MIDIin();
+	MIDIin midiin = MIDIin("/dev/snd/midiC1D0");
+	//MIDIin midiin = MIDIin();
 	BpmClock clock = BpmClock(60.0);
 	Context context = Context(&gamepad, &clock, &midiin);
 	Beater JACK = Beater(&context, "beater");

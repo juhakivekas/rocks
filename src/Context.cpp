@@ -29,8 +29,8 @@ void Context::update(){
 	data.d  = g->digital & 0xff;
 
 	//data.r = c->pulse;
-	//data.note = m->note;
-	//t_diff = (freq[data.note]*128.0)/JACK_SAMPLERATE;
+	data.note = m->note;
+	t_diff = (freq[data.note]*128.0)/JACK_SAMPLERATE;
 
 	//simulated overflow to keep floating point accuracy high
 	if(t>T_MAX) t -= T_MAX;

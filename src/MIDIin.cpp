@@ -62,12 +62,13 @@ int MIDIin::format(){
 	if(type == NOTE_ON){
 		note = value;
 	}else if(type == NOTE_OFF){
-		//note = 0;	
+		note = 0;	
 	}else if(type == CHAN_CTRL){
 	}else{
-		fprintf(stderr, "Error in MIDI data formatting\n");
-		fprintf(stderr, "note:%d\n", value);
-		fprintf(stderr, "velo:%d\n", velocity);
+		//lets just skip all the unecessary ones
+		//fprintf(stderr, "Error in MIDI data formatting\n");
+		//fprintf(stderr, "note:%d\n", value);
+		//fprintf(stderr, "velo:%d\n", velocity);
 		//something fucked up
 		return 1;
 	}

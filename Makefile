@@ -5,7 +5,7 @@ CPPC=g++
 JACKFLAGS= -lpthread -ljack -ldl -lrt -lm
 ALSAFLAGS= -lpthread -lasound -ldl -lm
 GFXFLAGS= -lX11 -lGL -l GLU
-CPPFLAGS=-g -Wall -std=c++11 -lpthread #$(JACKFLAGS)
+CPPFLAGS=-g -Wall -std=c++0x -lpthread #$(JACKFLAGS)
 
 all:\
 	objects\
